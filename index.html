@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#171512">
+<title>333 Nuggets — Cook Your Fate</title>
+<style>
+:root{--bg:#171512;--panel:#211e19;--cream:#f4ecd9;--muted:#a49a87;--orange:#ff8a32;--line:#393329}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0%,#30251a 0,transparent 55%),var(--bg);color:var(--cream);font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;min-height:100vh}
+.wrap{max-width:1040px;margin:auto;padding:26px 22px 56px}.top{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:18px}.brand{font-weight:900;letter-spacing:.08em;font-size:14px}.pill{border:1px solid #61503c;border-radius:99px;padding:7px 11px;color:#e6b27f;font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.hero{text-align:center;padding:55px 0 30px}.eyebrow{font-size:12px;letter-spacing:.23em;color:var(--orange);font-weight:800}.hero h1{font-size:clamp(42px,8vw,84px);letter-spacing:-.07em;line-height:.95;margin:17px 0}.hero h1 span{color:var(--orange)}.hero p{max-width:480px;margin:20px auto 0;color:var(--muted);line-height:1.7;font-size:15px}
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:760px;margin:26px auto}.card{background:linear-gradient(145deg,#26221c,#1d1a16);border:1px solid var(--line);border-radius:18px;padding:22px;min-height:290px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;overflow:hidden}.card-label{align-self:flex-start;color:var(--muted);font-size:11px;letter-spacing:.18em;font-weight:800}.nugget{width:176px;height:144px;position:relative;display:grid;place-items:center;filter:drop-shadow(0 18px 15px #0008);transition:transform .5s}.nugget svg{width:100%;height:100%;overflow:visible}.state{font-size:24px;font-weight:900;letter-spacing:.08em;margin:5px 0}.desc{color:var(--muted);font-size:13px}.actions{max-width:760px;margin:0 auto;text-align:center}.cook{background:var(--orange);color:#23170e;border:0;border-radius:10px;padding:16px 34px;font-weight:950;font-size:14px;letter-spacing:.1em;cursor:pointer;box-shadow:0 5px 0 #a64d17;transition:transform .15s,opacity .2s}.cook:hover{transform:translateY(-2px)}.cook:active{transform:translateY(2px);box-shadow:0 2px 0 #a64d17}.cook:disabled{opacity:.5;cursor:not-allowed;transform:none}.hint{color:var(--muted);font-size:12px;margin-top:15px;line-height:1.6}.result{display:none;max-width:760px;margin:18px auto 0;border:1px solid #66513b;background:#2a2118;border-radius:12px;padding:16px;text-align:center}.result.show{display:block}.result strong{color:var(--orange)}.bottom{display:flex;justify-content:space-between;gap:18px;border-top:1px solid var(--line);margin-top:48px;padding-top:18px;color:#847b6b;font-size:11px;letter-spacing:.04em}.bottom a{color:#c6b69b;text-decoration:none}.warning{margin:20px auto 0;max-width:760px;color:#8f8677;font-size:11px;line-height:1.6;text-align:center}
+@media(max-width:600px){.wrap{padding:18px 15px 36px}.hero{padding:42px 0 20px}.lab{gap:10px}.card{padding:14px 9px;min-height:245px}.nugget{width:130px;height:115px}.state{font-size:18px}.desc{font-size:11px}.bottom{flex-direction:column}.cook{width:100%}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="brand">333 / NUGGETS</div><div class="pill">An experiment on Monad</div></header>
+<section class="hero"><div class="eyebrow">SMALL NUGGET. BIG CONSEQUENCES.</div><h1>COOK YOUR<br><span>FATE.</span></h1><p>Every nugget starts RAW. Hit the button and take your chances. You get one cook. No second tries.</p></section>
+<section class="lab" aria-live="polite">
+<article class="card"><div class="card-label">YOUR NUGGET</div><div class="nugget" id="nugget"><svg viewBox="0 0 200 160" role="img" aria-label="Illustrated nugget"><defs><linearGradient id="raw" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f2d7a1"/><stop offset="1" stop-color="#bd9254"/></linearGradient><filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".08" numOctaves="2" result="noise"/><feDisplacementMap in="SourceGraphic" in2="noise" scale="3"/></filter></defs><path id="body" d="M34 91 Q19 72 43 56 L59 35 Q75 22 93 38 L118 29 Q141 31 144 51 Q174 57 167 81 L156 106 Q143 128 119 119 L93 137 Q70 140 63 119 Q38 120 34 91Z" fill="url(#raw)" stroke="#a47b42" stroke-width="3" filter="url(#rough)"/><g id="crumbs" fill="#fff0c9"><circle cx="60" cy="59" r="4"/><circle cx="91" cy="48" r="3"/><circle cx="132" cy="56" r="4"/><circle cx="147" cy="84" r="3"/><circle cx="77" cy="94" r="4"/><circle cx="119" cy="104" r="3"/><circle cx="53" cy="88" r="2"/></g><g id="burn" fill="#33231b" opacity="0"><path d="M41 65l20-9 7 16-17 9zM105 36l17 3-2 15-18-5zM126 89l23-7 5 17-22 8zM80 113l16-10 9 14-17 11z"/></g></svg></div><div><div class="state" id="state">RAW</div><div class="desc" id="desc">Uncooked. Untouched. Full of potential.</div></div></article>
+<article class="card"><div class="card-label">THE ODDS</div><div style="font-size:58px;line-height:1">🎲</div><div><div class="state">ONE SHOT.</div><div class="desc">Cooked or burnt. The outcome is random in this demo.</div></div></article>
+</section>
+<div class="actions"><button class="cook" id="cook">🔥 &nbsp; COOK MY NUGGET</button><div class="hint" id="hint">This action is irreversible in the concept. Make peace with your nugget.</div></div>
+<div class="result" id="result"></div>
+<p class="warning">PROTOTYPE ONLY: this browser demo simulates the outcome locally. It does not mint an NFT, connect a wallet, or write to Monad yet. Reloading resets the demo.</p>
+<footer class="bottom"><div>333 NUGGETS · A COLLECTIBLE EXPERIMENT</div><div><a href="https://monad.xyz/" target="_blank" rel="noreferrer">POWERED BY CURIOSITY ↗</a></div></footer>
+</main>
+<script>
+const button=document.getElementById('cook'),state=document.getElementById('state'),desc=document.getElementById('desc'),body=document.getElementById('body'),burn=document.getElementById('burn'),crumbs=document.getElementById('crumbs'),nugget=document.getElementById('nugget'),result=document.getElementById('result'),hint=document.getElementById('hint');
+let cooked=false;
+button.addEventListener('click',()=>{
+ if(cooked)return;
+ cooked=true;button.disabled=true;button.textContent='⏳  COOKING...';nugget.style.transform='rotate(12deg) scale(1.08)';
+ setTimeout(()=>{
+  const isBurnt=Math.random()<0.18;
+  body.setAttribute('fill',isBurnt?'#6c4931':'#c8792e');body.setAttribute('stroke',isBurnt?'#2d211b':'#87451e');burn.setAttribute('opacity',isBurnt?'1':'0');crumbs.setAttribute('fill',isBurnt?'#241a15':'#f5c477');
+  state.textContent=isBurnt?'BURNT':'COOKED';desc.textContent=isBurnt?'Crispy. A little too crispy.':'Golden. Crispy. Beautiful.';nugget.style.transform='rotate(0) scale(1)';button.textContent=isBurnt?'💀  FATE HAS SPOKEN':'✨  PERFECTLY COOKED';result.classList.add('show');result.innerHTML=isBurnt?'<strong>YOU GOT BURNT.</strong><br>Your nugget has chosen chaos. No re-cooks.':'<strong>YOU GOT COOKED.</strong><br>Golden outcome. Enjoy your nugget.';hint.textContent='One nugget. One cook. This is the end of the line.';
+ },700);
+});
+</script></body></html>
