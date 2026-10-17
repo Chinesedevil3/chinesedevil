@@ -1,9 +1,8 @@
 # Nado Storm — Ink Territory Arcade
 
-A single-page, client-side Qix-style territory game, made as a fan tribute for the Ink / Nado community. It is not an official game or endorsement.
+**Play now:** https://chinesedevil3.github.io/chinesedevil/nado-storm/
 
-## Run it
-Open `nado-storm/index.html` in a modern desktop browser. No build step, package manager, server, or external library is required.
+A single-page, client-side Qix-style territory game, made as a fan tribute for the Ink / Nado community. It is not an official game or endorsement.
 
 ## Controls
 - Arrow keys or WASD: move along safe territory.
@@ -15,11 +14,11 @@ Open `nado-storm/index.html` in a modern desktop browser. No build step, package
 
 Claim at least 78% of the playfield to advance. Avoid the cyan storm entities while a trail is exposed. Best score is saved locally in the browser.
 
-## GitHub Pages
-This folder is inside the `Chinesedevil3/chinesedevil` repository. Once Pages is enabled for the repository's main branch and root folder, the game should be available at:
-`https://chinesedevil3.github.io/chinesedevil/nado-storm/`
+## Run locally
+Open `nado-storm/index.html` in a modern desktop browser. No build step, package manager, server, or external library is required.
 
-If Pages is not enabled, open repository Settings → Pages → Build and deployment, select Deploy from a branch, choose `main` and `/(root)`, and save. The existing root project is left untouched.
+## Deployment
+GitHub Actions deploys the repository to GitHub Pages. The game lives in the `nado-storm/` subfolder, leaving the existing root project untouched. Workflow file: `.github/workflows/deploy-pages.yml`.
 
 ## Replace placeholder logo marks
 Use approved SVG artwork only. The top-left marks are currently CSS placeholders. To use the included SVGs, replace the .sigil elements with:
