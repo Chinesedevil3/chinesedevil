@@ -1,0 +1,33 @@
+# Nado Storm — Ink Territory Arcade
+
+A single-page, client-side Qix-style territory game, made as a fan tribute for the Ink / Nado community. It is not an official game or endorsement.
+
+## Run it
+Open `nado-storm/index.html` in a modern desktop browser. No build step, package manager, server, or external library is required.
+
+## Controls
+- Arrow keys or WASD: move along safe territory.
+- Hold Space or Z while moving: begin a trail. Reconnect with safe territory to close the cut.
+- Shift, or the DRAW toggle: slow draw for bonus points.
+- P: pause/resume.
+- Enter: start, advance, or reboot.
+- Sound toggle: turn synthesized arcade effects on/off.
+
+Claim at least 78% of the playfield to advance. Avoid the cyan storm entities while a trail is exposed. Best score is saved locally in the browser.
+
+## GitHub Pages
+This folder is inside the `Chinesedevil3/chinesedevil` repository. Once Pages is enabled for the repository's main branch and root folder, the game should be available at:
+`https://chinesedevil3.github.io/chinesedevil/nado-storm/`
+
+If Pages is not enabled, open repository Settings → Pages → Build and deployment, select Deploy from a branch, choose `main` and `/(root)`, and save. The existing root project is left untouched.
+
+## Replace placeholder logo marks
+Use approved SVG artwork only. The top-left marks are currently CSS placeholders. To use the included SVGs, replace the .sigil elements with:
+```html
+<img class="brand-logo" src="assets/ink-mark.svg" alt="Ink">
+<img class="brand-logo" src="assets/nado-mark.svg" alt="Nado">
+```
+Add `.brand-logo{width:31px;height:31px;object-fit:contain}` to the CSS. Keep the text splash labels or replace them with image elements. Do not imply official affiliation without permission.
+
+## Credit
+Fan-made Qix-style tribute for the Ink / Nado community. Not affiliated with or endorsed by Ink or Nado.
