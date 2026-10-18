@@ -159,7 +159,6 @@ function createStorm(){
   const count=Math.min(2+Math.floor((level-1)/2),14);
   const marginX=Math.max(1.5,12-(level-1)*.22);
   const marginY=Math.max(1.5,7-(level-1)*.11);
-  const speedMult=Math.min(2.8,1+(level-1)*.035);
   for(let i=0;i<count;i++){
     const angle=Math.random()*Math.PI*2;
     const speed=2.4+Math.random()*1.2;
@@ -570,12 +569,12 @@ function saveName(event){
   beep(520,.05);
 }
 function keyDown(e){
-  const controls=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','KeyW','KeyA','KeyS','KeyD','KeyZ','ShiftLeft','ShiftRight','KeyP','Enter','Escape'];
-  if(controls.includes(e.code))e.preventDefault();
   if(!$('leaderboardBackdrop').classList.contains('hidden')){
-    if(e.code==='Escape')closeLeaderboard();
+    if(e.code==='Escape'){e.preventDefault();closeLeaderboard()}
     return;
   }
+  const controls=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space','KeyW','KeyA','KeyS','KeyD','KeyZ','ShiftLeft','ShiftRight','KeyP','Enter','Escape'];
+  if(controls.includes(e.code))e.preventDefault();
   if(e.code==='Escape'&&state==='pause'){resumeGame();return}
   if(e.code==='KeyP'){pauseGame();return}
   if(e.code==='Enter'&&['title','over','level'].includes(state)){startGame();return}
