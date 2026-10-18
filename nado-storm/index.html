@@ -112,7 +112,7 @@ const TOOLS=[
 let grid=new Uint8Array(W*H),player={x:0,y:22,dx:1,dy:0};
 let enemies=[],particles=[],trail=[],held=new Set();
 let score=0,level=1,lives=3,percent=0,state='title';
-let drawing=false,drawSlow=false,soundOn=true,slowTrailCells=0;
+let drawing=false,drawSlow=false,soundOn=true,slowTrailCells=0,trailStart=null;
 let stepClock=0,lastFrame=0,elapsed=0,flash=0,audioContext=null;
 let runSaved=false,playerName='PLAYER',leaderboard=[];
 const STORAGE={name:'nado-storm-player-name',scores:'nado-storm-local-leaderboard',best:'nado-storm-best'};
@@ -173,7 +173,7 @@ function setupBoard(){
   for(let x=0;x<W;x++){grid[index(x,0)]=FILLED;grid[index(x,H-1)]=FILLED}
   for(let y=0;y<H;y++){grid[index(0,y)]=FILLED;grid[index(W-1,y)]=FILLED}
   player={x:0,y:Math.floor(H/2),dx:1,dy:0};
-  drawing=false;trail=[];slowTrailCells=0;held.clear();stepClock=0;flash=0;
+  drawing=false;trail=[];trailStart=null;slowTrailCells=0;held.clear();stepClock=0;flash=0;
   createStorm();
   particles=Array.from({length:115},()=>({
     x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.18,
@@ -233,7 +233,7 @@ function resumeGame(){
 }
 function startTrail(){
   if(drawing||cell(player.x,player.y)!==FILLED)return;
-  drawing=true;trail=[];slowTrailCells=0;
+  drawing=true;trail=[];trailStart={x:player.x,y:player.y};slowTrailCells=0;
   beep(510,.045,'triangle');
 }
 function addParticleBurst(px,py,color,count=20){
@@ -262,7 +262,7 @@ function getBestScore(){
 function loseLife(){
   if(state!=='play'||!drawing)return;
   for(const p of trail)if(inside(p.x,p.y)&&grid[index(p.x,p.y)]===TRAIL)grid[index(p.x,p.y)]=EMPTY;
-  trail=[];drawing=false;slowTrailCells=0;lives--;flash=1;
+  trail=[];trailStart=null;drawing=false;slowTrailCells=0;lives--;flash=1;
   beep(105,.28,'sawtooth',.055);updateHud();
   if(lives<=0){
     state='over';saveRun();showScreen('over');
@@ -317,7 +317,7 @@ function captureTerritory(){
   // Score only the territory captured in this cut, not the cells from earlier cuts.
   score+=Math.round(capturedCells*2*(1+level*.055)*(1+.55*slowRatio)+trail.length*2+slowTrailCells*2);
   const lastX=player.x,lastY=player.y;
-  trail=[];drawing=false;slowTrailCells=0;
+  trail=[];trailStart=null;drawing=false;slowTrailCells=0;
   updatePercent();
   beep(750,.09,'triangle');setTimeout(()=>beep(980,.1),75);
   addParticleBurst((lastX+.5)*TW,(lastY+.5)*TH,currentTool().glow,32);
@@ -442,7 +442,9 @@ function drawTerritory(){
 }
 function drawTrail(){
   if(!trail.length)return;
-  const tool=currentTool(),points=trail.map(p=>({x:(p.x+.5)*TW,y:(p.y+.5)*TH}));
+  const tool=currentTool(),points=[];
+  if(trailStart)points.push({x:(trailStart.x+.5)*TW,y:(trailStart.y+.5)*TH});
+  for(const p of trail)points.push({x:(p.x+.5)*TW,y:(p.y+.5)*TH});
   const drawPath=()=>{ctx.beginPath();ctx.moveTo(points[0].x,points[0].y);for(let i=1;i<points.length;i++)ctx.lineTo(points[i].x,points[i].y);if(points.length===1){ctx.moveTo(points[0].x+tool.width/2,points[0].y);ctx.arc(points[0].x,points[0].y,tool.width/2,0,Math.PI*2)}};
   ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.shadowColor=tool.glow;ctx.shadowBlur=tool.width*2.8;ctx.strokeStyle=tool.glow;ctx.lineWidth=tool.width+4;drawPath();ctx.stroke();ctx.shadowBlur=0;
   ctx.strokeStyle=tool.line;ctx.lineWidth=tool.width;drawPath();ctx.stroke();
