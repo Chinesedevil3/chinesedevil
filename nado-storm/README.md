@@ -7,6 +7,7 @@ A single-page, client-side Qix-style territory game, made as a fan tribute for t
 ## Controls
 - Arrow keys or WASD: move along safe territory.
 - Hold Space or Z while moving: begin a trail. Reconnect with safe territory to close the cut.
+- Release Space/Z to pause an unfinished trail, then hold it again to continue. The exposed trail remains vulnerable to storm collisions.
 - Shift, or the DRAW toggle: slow draw for bonus points.
 - P: pause/resume.
 - Enter: start, advance, or reboot.
