@@ -162,7 +162,7 @@ function createStorm(){
   const speedMult=Math.min(2.8,1+(level-1)*.035);
   for(let i=0;i<count;i++){
     const angle=Math.random()*Math.PI*2;
-    const speed=(2.4+Math.random()*1.2)*speedMult;
+    const speed=2.4+Math.random()*1.2;
     let x=marginX+Math.random()*Math.max(1,W-2*marginX);
     let y=marginY+Math.random()*Math.max(1,H-2*marginY);
     x=clamp(x,1.51,W-1.51);y=clamp(y,1.51,H-1.51);
@@ -289,6 +289,7 @@ function addTrailCell(x,y){
 function captureTerritory(){
   if(!drawing||trail.length===0)return;
   // Convert every trail cell to solid territory before flood-filling, so the cut is fully sealed.
+  let capturedCells=trail.length;
   for(const p of trail)grid[index(p.x,p.y)]=FILLED;
   const seen=new Uint8Array(W*H),components=[];
   for(let y=1;y<H-1;y++){
@@ -311,14 +312,11 @@ function captureTerritory(){
   const stormCells=enemies.map(e=>({x:Math.floor(e.x),y:Math.floor(e.y)}));
   for(const component of components){
     const containsStorm=stormCells.some(e=>component.some(p=>p.x===e.x&&p.y===e.y));
-    if(!containsStorm)for(const p of component)grid[index(p.x,p.y)]=FILLED;
+    if(!containsStorm)for(const p of component){grid[index(p.x,p.y)]=FILLED;capturedCells++}
   }
-  let gained=0;
-  for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++)if(grid[index(x,y)]===FILLED)gained++;
-  const before=percent;
   const slowRatio=trail.length?slowTrailCells/trail.length:0;
-  // Trail length adds a small completion bonus; slow-drawn cells receive an extra multiplier.
-  score+=Math.round(gained*2*(1+level*.055)*(1+.55*slowRatio)+trail.length*2+slowTrailCells*2);
+  // Score only the territory captured in this cut, not the cells from earlier cuts.
+  score+=Math.round(capturedCells*2*(1+level*.055)*(1+.55*slowRatio)+trail.length*2+slowTrailCells*2);
   const lastX=player.x,lastY=player.y;
   trail=[];drawing=false;slowTrailCells=0;
   updatePercent();
