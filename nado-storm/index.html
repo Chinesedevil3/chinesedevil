@@ -41,7 +41,7 @@ const $=id=>document.getElementById(id);
 const W=80,H=45,CW=canvas.width,CH=canvas.height,TW=CW/W,TH=CH/H;
 const EMPTY=0,FILLED=1,TRAIL=2,GOAL=78;
 let grid=new Uint8Array(W*H),player,enemies=[],particles=[],trail=[],held=new Set();
-let score=0,level=1,lives=3,pct=0,state='title',drawing=false,slow=false,sound=true;
+let score=0,level=1,lives=3,pct=0,state='title',drawing=false,slow=false,sound=true,slowTrailCells=0;
 let clock=0,last=0,elapsed=0,flash=0,audio=null,best=0;
 try{best=+(localStorage.getItem('nado-storm-best')||0)}catch(e){}
 const index=(x,y)=>y*W+x,inside=(x,y)=>x>=0&&x<W&&y>=0&&y<H;
@@ -51,24 +51,24 @@ function beep(f=440,d=.07,type='sine',vol=.03){if(!sound)return;try{audio ||= ne
 function updateHud(){ $('score').textContent=String(score).padStart(6,'0');$('level').textContent=String(level).padStart(2,'0');$('percent').textContent=pct;$('lives').textContent=lives>0?'♥ '.repeat(lives).trim():'—';$('progress').style.width=Math.min(100,pct/GOAL*100)+'%';}
 function updatePct(){let n=0;for(const v of grid)if(v===FILLED)n++;pct=Math.round(n/grid.length*100);updateHud();}
 function setup(){grid=new Uint8Array(W*H);for(let x=0;x<W;x++){grid[index(x,0)]=FILLED;grid[index(x,H-1)]=FILLED}for(let y=0;y<H;y++){grid[index(0,y)]=FILLED;grid[index(W-1,y)]=FILLED}
-player={x:0,y:Math.floor(H/2),dx:1,dy:0};drawing=false;trail=[];held.clear();clock=0;flash=0;enemies=[];
+player={x:0,y:Math.floor(H/2),dx:1,dy:0};drawing=false;trail=[];held.clear();clock=0;flash=0;slowTrailCells=0;enemies=[];
 const marginX=Math.max(2,12-(level-1)*1.5),marginY=Math.max(2,6-(level-1)*.7);for(let i=0;i<Math.min(level+1,9);i++)enemies.push({x:marginX+Math.random()*(W-marginX*2),y:marginY+Math.random()*(H-marginY*2),vx:(Math.random()<.5?-1:1)*(.065+Math.random()*.035+level*.007),vy:(Math.random()<.5?-1:1)*(.06+Math.random()*.04+level*.005),phase:Math.random()*6.28});
 particles=Array.from({length:100},()=>({x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,r:.3+Math.random()*1.5,a:.12+Math.random()*.45,phase:Math.random()*6.28}));
 updatePct();}
 function overlay(mode){$('overlay').classList.remove('hidden');if(mode==='title'){$('eyebrow').textContent='A NEON TERRITORY GAME';$('hero').innerHTML='NADO<br><span>STORM</span>';$('subtitle').textContent='Cut through the void. Claim the territory. Avoid the storm. Draw a trail from your safe zone and seal it before the storm finds you.';$('start').textContent='PRESS START';$('hint').textContent='MOVE: ARROWS / WASD · DRAW: HOLD SPACE OR Z'}else if(mode==='level'){$('eyebrow').textContent='TERRITORY SECURED';$('hero').innerHTML='LEVEL<br><span>CLEARED</span>';$('subtitle').textContent='Storm contained. '+pct+'% territory claimed. Your signal grows stronger.';$('start').textContent='NEXT LEVEL';$('hint').textContent='THE STORM RETURNS FASTER'}else if(mode==='over'){$('eyebrow').textContent='SIGNAL LOST';$('hero').innerHTML='GAME<br><span>OVER</span>';$('subtitle').textContent='Final score '+score.toLocaleString()+'. Best run: '+best.toLocaleString()+'. The storm is never truly gone.';$('start').textContent='REBOOT SYSTEM';$('hint').textContent='PRESS START TO TRY AGAIN'}else{$('eyebrow').textContent='SYSTEM PAUSED';$('hero').innerHTML='TAKE A<br><span>BREATH</span>';$('subtitle').textContent='The storm is frozen. Press P or continue when ready.';$('start').textContent='CONTINUE';$('hint').textContent='P TO RESUME'}}
 function startGame(){if(state==='title'||state==='over'){score=0;level=1;lives=3;setup()}else if(state==='level'){level++;setup()}state='play';$('overlay').classList.add('hidden');beep(620,.11,'triangle');last=performance.now();requestAnimationFrame(loop)}
 function pause(){if(state==='play'){state='pause';overlay('pause')}else if(state==='pause'){state='play';$('overlay').classList.add('hidden');last=performance.now();requestAnimationFrame(loop)}}
-function drawStart(){if(drawing||cell(player.x,player.y)!==FILLED)return;drawing=true;trail=[];beep(510,.05,'triangle')}
-function loseLife(){for(const p of trail)if(inside(p.x,p.y)&&grid[index(p.x,p.y)]===TRAIL)grid[index(p.x,p.y)]=EMPTY;trail=[];drawing=false;lives--;flash=1;beep(110,.26,'sawtooth',.055);updateHud();if(lives<=0){state='over';best=Math.max(best,score);try{localStorage.setItem('nado-storm-best',best)}catch(e){}overlay('over')}else{player.x=0;player.y=Math.floor(H/2);player.dx=1;player.dy=0}}
+function drawStart(){if(drawing||cell(player.x,player.y)!==FILLED)return;drawing=true;trail=[];slowTrailCells=0;beep(510,.05,'triangle')}
+function loseLife(){for(const p of trail)if(inside(p.x,p.y)&&grid[index(p.x,p.y)]===TRAIL)grid[index(p.x,p.y)]=EMPTY;trail=[];drawing=false;slowTrailCells=0;lives--;flash=1;beep(110,.26,'sawtooth',.055);updateHud();if(lives<=0){state='over';best=Math.max(best,score);try{localStorage.setItem('nado-storm-best',best)}catch(e){}overlay('over')}else{player.x=0;player.y=Math.floor(H/2);player.dx=1;player.dy=0}}
 function addBurst(x,y,color,n=20){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=.5+Math.random()*3;particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:1+Math.random()*2,a:1,life:25+Math.random()*25,color,burst:true})}}
 function capture(){for(const p of trail)grid[index(p.x,p.y)]=FILLED;
 const seen=new Uint8Array(W*H),comps=[];
 for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){let start=index(x,y);if(grid[start]!==EMPTY||seen[start])continue;let q=[{x,y}],comp=[];seen[start]=1;for(let i=0;i<q.length;i++){let p=q[i];comp.push(p);for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){let nx=p.x+d[0],ny=p.y+d[1];if(!inside(nx,ny))continue;let k=index(nx,ny);if(!seen[k]&&grid[k]===EMPTY){seen[k]=1;q.push({x:nx,y:ny})}}}comps.push(comp)}
 const epos=enemies.map(e=>({x:Math.floor(e.x),y:Math.floor(e.y)}));let gained=trail.length;
 for(const comp of comps){let contains=epos.some(e=>comp.some(p=>p.x===e.x&&p.y===e.y));if(!contains)for(const p of comp){grid[index(p.x,p.y)]=FILLED;gained++}}
-const isSlow=slow||held.has('ShiftLeft')||held.has('ShiftRight');const modeMultiplier=isSlow?1.5:1;score+=Math.round(gained*2*(1+level*.12)*modeMultiplier+trail.length*(isSlow?2:1));trail=[];drawing=false;updatePct();beep(760,.09,'triangle');setTimeout(()=>beep(980,.1),70);addBurst(player.x*TW,player.y*TH,'#bd71ff',25);
+const slowRatio=trail.length?slowTrailCells/trail.length:0;const modeMultiplier=1+0.5*slowRatio;score+=Math.round(gained*2*(1+level*.12)*modeMultiplier+trail.length+slowTrailCells);trail=[];drawing=false;slowTrailCells=0;updatePct();beep(760,.09,'triangle');setTimeout(()=>beep(980,.1),70);addBurst(player.x*TW,player.y*TH,'#bd71ff',25);
 if(pct>=GOAL){state='level';best=Math.max(best,score);try{localStorage.setItem('nado-storm-best',best)}catch(e){}overlay('level')}}
-function enterTrail(x,y){if(!inside(x,y))return;const v=cell(x,y);if(v===FILLED){player.x=x;player.y=y;if(drawing)capture();return}if(v===TRAIL){return}grid[index(x,y)]=TRAIL;trail.push({x,y});player.x=x;player.y=y}
+function enterTrail(x,y){if(!inside(x,y))return;const v=cell(x,y);if(v===FILLED){player.x=x;player.y=y;if(drawing)capture();return}if(v===TRAIL){return}grid[index(x,y)]=TRAIL;trail.push({x,y});if(slow||held.has('ShiftLeft')||held.has('ShiftRight'))slowTrailCells++;player.x=x;player.y=y}
 function move(dx,dy){
 if(!dx&&!dy)return;
 player.dx=dx;player.dy=dy;
