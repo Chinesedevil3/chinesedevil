@@ -66,7 +66,7 @@ const seen=new Uint8Array(W*H),comps=[];
 for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){let start=index(x,y);if(grid[start]!==EMPTY||seen[start])continue;let q=[{x,y}],comp=[];seen[start]=1;for(let i=0;i<q.length;i++){let p=q[i];comp.push(p);for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){let nx=p.x+d[0],ny=p.y+d[1];if(!inside(nx,ny))continue;let k=index(nx,ny);if(!seen[k]&&grid[k]===EMPTY){seen[k]=1;q.push({x:nx,y:ny})}}}comps.push(comp)}
 const epos=enemies.map(e=>({x:Math.floor(e.x),y:Math.floor(e.y)}));let gained=trail.length;
 for(const comp of comps){let contains=epos.some(e=>comp.some(p=>p.x===e.x&&p.y===e.y));if(!contains)for(const p of comp){grid[index(p.x,p.y)]=FILLED;gained++}}
-const isSlow=slow||held.has('ShiftLeft')||held.has('ShiftRight');score+=Math.round(gained*(isSlow?1.7:2.1)*(1+level*.12)+trail.length*(isSlow?1.5:1));trail=[];drawing=false;updatePct();beep(760,.09,'triangle');setTimeout(()=>beep(980,.1),70);addBurst(player.x*TW,player.y*TH,'#bd71ff',25);
+const isSlow=slow||held.has('ShiftLeft')||held.has('ShiftRight');const modeMultiplier=isSlow?1.5:1;score+=Math.round(gained*2*(1+level*.12)*modeMultiplier+trail.length*(isSlow?2:1));trail=[];drawing=false;updatePct();beep(760,.09,'triangle');setTimeout(()=>beep(980,.1),70);addBurst(player.x*TW,player.y*TH,'#bd71ff',25);
 if(pct>=GOAL){state='level';best=Math.max(best,score);try{localStorage.setItem('nado-storm-best',best)}catch(e){}overlay('level')}}
 function enterTrail(x,y){if(!inside(x,y))return;const v=cell(x,y);if(v===FILLED){player.x=x;player.y=y;if(drawing)capture();return}if(v===TRAIL){return}grid[index(x,y)]=TRAIL;trail.push({x,y});player.x=x;player.y=y}
 function move(dx,dy){
